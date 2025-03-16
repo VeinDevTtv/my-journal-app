@@ -3,6 +3,7 @@ import { Button, Stack, Typography } from '@mui/material';
 import { StorageService } from '../services/storageService';
 import { JournalEntry } from '../types/JournalEntry';
 import { Transaction } from '../types/Transaction';
+import { Goal } from '../types/Goal';
 
 const DataExportImport: React.FC = () => {
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -11,6 +12,7 @@ const DataExportImport: React.FC = () => {
     const data = {
       journals: StorageService.getJournalEntries(),
       transactions: StorageService.getTransactions(),
+      goals: StorageService.getGoals(),
     };
     const dataStr = JSON.stringify(data, null, 2);
     const blob = new Blob([dataStr], { type: 'application/json' });
@@ -25,19 +27,29 @@ const DataExportImport: React.FC = () => {
   const exportCSV = () => {
     const journals: JournalEntry[] = StorageService.getJournalEntries();
     const transactions: Transaction[] = StorageService.getTransactions();
+    const goals: Goal[] = StorageService.getGoals();
 
     let csvContent = "data:text/csv;charset=utf-8,";
 
-    csvContent += "JOURNALS\n";
+    // Journals Section
+    csvContent += "=== JOURNALS ===\n";
     csvContent += "ID,Date,Title,Content,Tags\n";
     journals.forEach(entry => {
-      csvContent += `${entry.id},${entry.date},${entry.title},${entry.content},${entry.tags?.join('|')}\n`;
+      csvContent += `"${entry.id}","${entry.date}","${entry.title}","${entry.content.replace(/"/g, '""')}","${entry.tags ? entry.tags.join('|') : ''}"\n`;
     });
 
-    csvContent += "\nTRANSACTIONS\n";
+    // Transactions Section
+    csvContent += "\n=== TRANSACTIONS ===\n";
     csvContent += "ID,Date,Amount,Category,Description,Recurrence\n";
     transactions.forEach(tx => {
-      csvContent += `${tx.id},${tx.date},${tx.amount},${tx.category},${tx.description},${tx.recurrence || 'none'}\n`;
+      csvContent += `"${tx.id}","${tx.date}",${tx.amount},"${tx.category}","${tx.description.replace(/"/g, '""')}","${tx.recurrence || 'none'}"\n`;
+    });
+
+    // Goals Section
+    csvContent += "\n=== GOALS ===\n";
+    csvContent += "ID,Description,TargetAmount,Deadline,GoalCategory\n";
+    goals.forEach(goal => {
+      csvContent += `"${goal.id}","${goal.description.replace(/"/g, '""')}",${goal.targetAmount},"${goal.deadline}","${goal.goalCategory || ''}"\n`;
     });
 
     const encodedUri = encodeURI(csvContent);
@@ -59,6 +71,9 @@ const DataExportImport: React.FC = () => {
         }
         if (data.transactions) {
           StorageService.saveTransactions(data.transactions);
+        }
+        if (data.goals) {
+          StorageService.saveGoals(data.goals);
         }
         alert('Data imported successfully!');
       } catch (error) {
