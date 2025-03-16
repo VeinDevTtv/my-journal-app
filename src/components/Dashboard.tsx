@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from 'react';
-import { Card, CardContent, Grid, Typography } from '@mui/material';
+import { Card, CardContent, Grid, Typography, LinearProgress, Box } from '@mui/material';
 import { Transaction } from '../types/Transaction';
 import { StorageService } from '../services/storageService';
 import { Chart, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
 import { Bar } from 'react-chartjs-2';
+import { Goal } from '../types/Goal';
 
 Chart.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
@@ -11,11 +12,14 @@ const Dashboard: React.FC = () => {
   const [transactions, setTransactions] = useState<Transaction[]>([]);
   const [income, setIncome] = useState(0);
   const [expense, setExpense] = useState(0);
+  const [goals, setGoals] = useState<Goal[]>([]);
 
   useEffect(() => {
     const txs = StorageService.getTransactions();
     setTransactions(txs);
     calculateMetrics(txs);
+    const goalsData = StorageService.getGoals();
+    setGoals(goalsData);
   }, []);
 
   const calculateMetrics = (txs: Transaction[]) => {
@@ -70,6 +74,27 @@ const Dashboard: React.FC = () => {
             </CardContent>
           </Card>
         </Grid>
+        {goals.length > 0 && (
+          <Grid item xs={12}>
+            <Card>
+              <CardContent>
+                <Typography variant="h6">Goals & Milestones</Typography>
+                {goals.map(goal => {
+                  const progress = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
+                  return (
+                    <Box key={goal.id} mb={2}>
+                      <Typography variant="subtitle1">{goal.description}</Typography>
+                      <LinearProgress variant="determinate" value={progress} />
+                      <Typography variant="caption">
+                        ${goal.currentAmount.toFixed(2)} / ${goal.targetAmount.toFixed(2)}
+                      </Typography>
+                    </Box>
+                  );
+                })}
+              </CardContent>
+            </Card>
+          </Grid>
+        )}
       </Grid>
     </div>
   );

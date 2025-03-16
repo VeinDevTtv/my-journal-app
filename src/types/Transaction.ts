@@ -1,8 +1,9 @@
 export interface Transaction {
     id: string;
     date: string;
-    amount: number; // Positive for income, negative for expense
+    amount: number;
     category: string;
     description: string;
+    recurrence?: 'none' | 'daily' | 'weekly' | 'monthly';
   }
   
