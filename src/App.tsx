@@ -55,8 +55,26 @@ const AppRoutes: React.FC<{
         <Route path="/data" element={<PrivateRoute><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}><DataExportImport /></motion.div></PrivateRoute>} />
         <Route path="/goals" element={<PrivateRoute><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}><Goals /></motion.div></PrivateRoute>} />
         <Route path="/reminders" element={<PrivateRoute><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}><Reminders /></motion.div></PrivateRoute>} />
-        <Route path="/advanced-analytics" element={<PrivateRoute><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}><AdvancedAnalytics /></motion.div></PrivateRoute>} />
-        <Route path="/prompts" element={<PrivateRoute><motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}><PromptRecommendations /></motion.div></PrivateRoute>} />
+        <Route
+  path="/advanced-analytics"
+  element={
+    <PrivateRoute>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <AdvancedAnalytics />
+      </motion.div>
+    </PrivateRoute>
+  }
+/>
+<Route
+  path="/prompts"
+  element={
+    <PrivateRoute>
+      <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
+        <PromptRecommendations />
+      </motion.div>
+    </PrivateRoute>
+  }
+/>
       </Routes>
       {!hideSpeedDial && (
         <SpeedDial

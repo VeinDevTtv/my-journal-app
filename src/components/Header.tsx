@@ -39,6 +39,13 @@ const Header: React.FC<HeaderProps> = ({ darkMode, toggleTheme, onAccentChange, 
             <Button color="inherit" component={Link} to="/reminders">Reminders</Button>
           </>
         )}
+        {user && (
+  <>
+    <Button color="inherit" component={Link} to="/advanced-analytics">Analytics</Button>
+    <Button color="inherit" component={Link} to="/prompts">Prompts</Button>
+  </>
+)}
+
         {user ? (
           <Button color="inherit" onClick={logout}>Logout</Button>
         ) : (
