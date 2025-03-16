@@ -96,6 +96,17 @@ const Dashboard: React.FC = () => {
     ],
   };
 
+  // Compute current amount for a given goal based on its category
+  const computeCurrentAmount = (goal: Goal): number => {
+    if (goal.goalCategory) {
+      const sum = transactions
+        .filter(tx => tx.category === goal.goalCategory && tx.amount > 0)
+        .reduce((acc, tx) => acc + tx.amount, 0);
+      return sum;
+    }
+    return 0;
+  };
+
   return (
     <div>
       <Typography variant="h4" gutterBottom>Dashboard</Typography>
@@ -137,13 +148,16 @@ const Dashboard: React.FC = () => {
               <CardContent>
                 <Typography variant="h6">Goals & Milestones</Typography>
                 {goals.map(goal => {
-                  const progress = Math.min((goal.currentAmount / goal.targetAmount) * 100, 100);
+                  const current = computeCurrentAmount(goal);
+                  const progress = Math.min((current / goal.targetAmount) * 100, 100);
                   return (
                     <Box key={goal.id} mb={2}>
-                      <Typography variant="subtitle1">{goal.description}</Typography>
+                      <Typography variant="subtitle1">
+                        {goal.description} ({goal.goalCategory})
+                      </Typography>
                       <LinearProgress variant="determinate" value={progress} />
                       <Typography variant="caption">
-                        ${goal.currentAmount.toFixed(2)} / ${goal.targetAmount.toFixed(2)}
+                        ${current.toFixed(2)} / ${goal.targetAmount.toFixed(2)}
                       </Typography>
                     </Box>
                   );

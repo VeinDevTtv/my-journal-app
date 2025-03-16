@@ -14,6 +14,7 @@ import Reminders from './components/Reminders';
 import Login from './components/Login';
 import Register from './components/Register';
 import PrivateRoute from './components/PrivateRoute';
+import PublicRoute from './components/PublicRoute';
 import { motion } from 'framer-motion';
 
 const App: React.FC = () => {
@@ -45,11 +46,24 @@ const App: React.FC = () => {
   return (
     <ThemeProvider theme={theme}>
       <Router>
-        <Header darkMode={darkMode} toggleTheme={toggleTheme} onAccentChange={handleAccentColorChange} accentColor={accentColor} />
+        <Header 
+          darkMode={darkMode} 
+          toggleTheme={toggleTheme} 
+          onAccentChange={handleAccentColorChange} 
+          accentColor={accentColor} 
+        />
         <Container sx={{ marginTop: 4, position: 'relative', minHeight: '80vh' }}>
           <Routes>
-            <Route path="/login" element={<Login />} />
-            <Route path="/register" element={<Register />} />
+            <Route path="/login" element={
+              <PublicRoute>
+                <Login />
+              </PublicRoute>
+            } />
+            <Route path="/register" element={
+              <PublicRoute>
+                <Register />
+              </PublicRoute>
+            } />
             <Route path="/" element={
               <PrivateRoute>
                 <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
